@@ -1,0 +1,8 @@
+before_script:
+    - apt-get install golang
+
+
+test:
+    - go test
+
+
