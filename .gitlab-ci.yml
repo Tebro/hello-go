@@ -1,23 +1,65 @@
-image: ubuntu:14.04
-
-before_script:
-    - apt-get update
-    - apt-get install -y golang
-
 stages:
-    - test
-    - run
+  - build
+  - package
+  - test
+  - deploy
 
-test:
-    stage: test
-    script:
-        - go test
+variables:
+  APPLICATION_IMAGE: registry.gitlab.com/tebro/hello-go:$CI_BUILD_REF_NAME
+  ROBOT_IMAGE: registry.gitlab.com/tebro/hello-go:$CI_BUILD_REF_NAME-robot
 
+build:
+  image: golang
+  stage: build
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - main
+  script:
+    - CGO_ENABLED=0 go build --ldflags '--extldflags "--static"' src/main.go
 
-run:
-    stage: run
-    script:
-        - go run main.go
-    environment: test
+unit_test:
+  image: golang
+  stage: build
+  script:
+    - go test
+
+application_image:
+  stage: package
+  image: docker:1.12
+  services:
+    - docker:1.12-dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.old-box.com
+    - docker build -f Dockerfile-ci -t $APPLICATION_IMAGE .
+    - docker push $APPLICATION_IMAGE
+
+robot_image:
+  stage: package
+  image: docker:1.12
+  services:
+    - docker:1.12-dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.old-box.com
+    - docker build -t $ROBOT_IMAGE robot
+    - docker push $ROBOT_IMAGE
+    
+robot_test:
+  image: docker:1.12
+  stage: test
+  services:
+    - docker:1.12-dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.old-box.com
+    - docker run -d --name selenium selenium/standalone-firefox:latest
+    - docker run -d --name application $APPLICATION_IMAGE
+    - docker run --rm -v $(pwd)/robotreport:/robot/out --link application:application --link selenium:selenium $ROBOT_IMAGE
+  artifacts:
+      expire_in: 1 day
+      paths:
+        - out/log.html
+        - out/report.html
+        - out/output.xml
+
 
 

@@ -1,0 +1,26 @@
+---
+- name: Add apt-key for docker repo
+  apt_key:
+    keyserver: hkp://p80.pool.sks-keyservers.net:80
+    id: 58118E89F3A012897C070ADbF76221572C52609D
+    state: present
+
+- name: Add docker repo
+  apt_repository:
+    repo: "deb https://apt.dockerproject.org/repo ubuntu-trusty main"
+    state: present
+
+- name: Install docker
+  apt:
+    name: docker-engine
+    state: present
+    update_cache: yes
+
+- name: Start and enable docker
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Add Vagrant user to docker group
+  command: "usermod -aG docker vagrant"

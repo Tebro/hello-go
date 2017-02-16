@@ -1,0 +1,8 @@
+---
+- name: Provision 
+  hosts: all
+  become: yes
+  roles:
+    - golang
+    - docker
+
