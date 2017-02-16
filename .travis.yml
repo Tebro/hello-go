@@ -1,13 +1,12 @@
 sudo: required
 
-# TODO: Check if language is needed
 language: python
 
 services:
   - docker
 
 before_install:
-  - docker build -t app src
+  - docker build -t app .
   - docker run -d --network=host -p 4444:4444 --name selenium selenium/standalone-firefox:latest
   - docker run -d --network=host -p 80:80 --name app app
 
