@@ -1,7 +1,4 @@
 FROM golang
-#FROM alpine
-#
-#RUN apk add --update go
 
 ADD ./src /src
 
