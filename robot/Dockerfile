@@ -7,7 +7,7 @@ ADD . /robot
 
 WORKDIR /robot
 
-ENV SELENIUM_REMOTE_URL http://selenium:4444/wd/hub
-ENV APPLICATION_HOST application
+ENV SELENIUM_REMOTE_URL http://localhost:4444/wd/hub
+ENV APPLICATION_HOST localhost
 
 CMD pybot -d out .

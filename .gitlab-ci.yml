@@ -51,15 +51,15 @@ robot_test:
     - docker:1.12-dind
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker run -d --name selenium selenium/standalone-firefox:latest
-    - docker run -d --name application $APPLICATION_IMAGE
-    - docker run --rm -v $(pwd)/robotreport:/robot/out --link application:application --link selenium:selenium $ROBOT_IMAGE
+    - docker run -d --name selenium --network=host -p 4444:4444 selenium/standalone-firefox:latest
+    - docker run -d --name application --network=host -p 80:80 $APPLICATION_IMAGE
+    - docker run --rm --network=host -v $(pwd)/robotreport:/robot/out $ROBOT_IMAGE
   artifacts:
       expire_in: 1 day
       paths:
-        - out/log.html
-        - out/report.html
-        - out/output.xml
+        - robotreport/log.html
+        - robotreport/report.html
+        - robotreport/output.xml
 
 
 
