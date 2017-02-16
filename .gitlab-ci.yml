@@ -22,7 +22,7 @@ unit_test:
   image: golang
   stage: build
   script:
-    - go test
+    - go test ./src
 
 application_image:
   stage: package
