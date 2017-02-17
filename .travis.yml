@@ -10,8 +10,10 @@ before_install:
   - docker run -d --network=host -p 4444:4444 --name selenium selenium/standalone-firefox:latest
   - docker run -d --network=host -p 80:80 --name app app
 
+install:
+  - pip install -r robot/requirements.txt
+
 script:
   - export SELENIUM_REMOTE_URL=http://localhost:4444/wd/hub
   - export APPLICATION_HOST=localhost
-  - pip install -r robot/requirements.txt
   - pybot robot
