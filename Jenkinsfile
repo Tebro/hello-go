@@ -21,7 +21,7 @@ pipeline {
             post {
                 always {
                     sh 'docker rm -f selenium app'
-                    sh 'docker rmi $(docker images -q -f dangling=true)'
+                    sh 'docker rmi $(docker images -q -f dangling=true) || true'
                 }
             }
         }
