@@ -17,7 +17,7 @@ pipeline {
                 sh 'docker network create $BRANCH_NAME'
                 sh 'docker run -d --network=$BRANCH_NAME --name selenium-$BRANCH_NAME selenium/standalone-firefox:latest' 
                 sh 'docker run -d --network=$BRANCH_NAME --name app-$BRANCH_NAME app:$BRANCH_NAME'
-                sh 'docker run --rm --network=$BRANCH_NAME -e SELENIUM_REMOTE_URL=http://selenium-$BRANCH_NAME/wd/hub -e APPLICATION_HOST=app-$BRANCH_NAME robot:$BRANCH_NAME'
+                sh 'docker run --rm --network=$BRANCH_NAME -e SELENIUM_REMOTE_URL=http://selenium-$BRANCH_NAME:4444/wd/hub -e APPLICATION_HOST=app-$BRANCH_NAME robot:$BRANCH_NAME'
             }
             post {
                 always {
