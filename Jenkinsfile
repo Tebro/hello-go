@@ -21,8 +21,8 @@ pipeline {
             }
             post {
                 always {
-                    sh 'docker rm -f selenium-$BRANCH_NAME app-$BRANCH-NAME'
-                    sh 'docker network rm $BRANCH_NAME'
+                    sh 'docker rm -f selenium-$BRANCH_NAME app-$BRANCH-NAME || true'
+                    sh 'docker network rm $BRANCH_NAME || true'
                     sh 'docker rmi $(docker images -q -f dangling=true) || true'
                 }
             }
